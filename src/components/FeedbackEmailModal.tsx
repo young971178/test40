@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X,
   Mail,
@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   ExternalLink,
   RotateCcw,
-  Calendar,
   Layers,
   Award,
   Sparkles,
@@ -19,7 +18,7 @@ import {
   Clock,
   UserCheck
 } from 'lucide-react';
-import { CandidateEvaluation } from '../App';
+import type { CandidateEvaluation } from '../App';
 
 interface FeedbackEmailModalProps {
   isOpen: boolean;
