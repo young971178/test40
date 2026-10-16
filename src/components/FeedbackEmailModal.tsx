@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Mail,
@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   ExternalLink,
   RotateCcw,
+  Calendar,
   Layers,
   Award,
   Sparkles,
@@ -18,7 +19,7 @@ import {
   Clock,
   UserCheck
 } from 'lucide-react';
-import type { CandidateEvaluation } from '../App';
+import { CandidateEvaluation } from '../App';
 
 interface FeedbackEmailModalProps {
   isOpen: boolean;
@@ -198,15 +199,43 @@ export function FeedbackEmailModal({
     setIsEditMode(false);
   }, [candidate]);
 
-  // Handle Send
+  // Target URL based on pass/fail status
+  const targetUrl = candidate.isPassed
+    ? 'https://test34-tcuc.vercel.app/'
+    : 'https://test14-wyc8.vercel.app/';
+
+  // Handle Send & Connect
   const handleSendEmail = () => {
     setIsSending(true);
+
+    // Open the designated target URL in a new window/tab
+    try {
+      const newWin = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+        const link = document.createElement('a');
+        link.href = targetUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch {
+      const link = document.createElement('a');
+      link.href = targetUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     setTimeout(() => {
       setIsSending(false);
       setIsSent(true);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 5000);
-    }, 800);
+      setTimeout(() => setShowToast(false), 9000);
+    }, 600);
   };
 
   return (
@@ -227,12 +256,12 @@ export function FeedbackEmailModal({
                 </span>
                 {isSent && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> 발송 완료
+                    <CheckCircle2 className="w-3.5 h-3.5" /> 발송 및 연결 완료
                   </span>
                 )}
               </h3>
               <p className="text-xs text-slate-400">
-                수신인: {candidate.candidateName} ({recipientEmail}) | 모듈 {candidate.moduleNumber}
+                수신인: {candidate.candidateName} ({recipientEmail}) | 판정: {candidate.isPassed ? '합격' : '불합격'}
               </p>
             </div>
           </div>
@@ -267,18 +296,32 @@ export function FeedbackEmailModal({
           </div>
         </div>
 
-        {/* TOAST NOTIFICATION */}
+        {/* TOAST NOTIFICATION WITH DIRECT LINK */}
         {showToast && (
-          <div className="bg-emerald-600 text-white px-4 py-2.5 text-xs font-semibold flex items-center justify-between shrink-0 shadow-md animate-in slide-in-from-top duration-300">
+          <div className="bg-emerald-600 text-white px-4 py-3 text-xs font-semibold flex flex-wrap items-center justify-between gap-2 shrink-0 shadow-md animate-in slide-in-from-top duration-300">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-200 shrink-0" />
               <span>
-                <strong>{recipientEmail}</strong> ({candidate.candidateName} 응시자)에게 피드백 메일이 성공적으로 발송되었습니다.
+                <strong>{recipientEmail}</strong> ({candidate.candidateName} 응시자)에게 피드백 메일이 발송되었습니다.{' '}
+                <span className="text-emerald-100 font-normal">
+                  ({candidate.isPassed ? '합격자 연결: https://test34-tcuc.vercel.app/' : '불합격자 연결: https://test14-wyc8.vercel.app/'})
+                </span>
               </span>
             </div>
-            <button onClick={() => setShowToast(false)} className="text-emerald-200 hover:text-white">
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <a
+                href={targetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1 bg-white text-emerald-800 rounded-lg font-bold hover:bg-emerald-50 flex items-center gap-1 shadow-xs transition-colors"
+              >
+                <span>{candidate.isPassed ? '합격자 포털 열기' : '재응시 페이지 열기'}</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+              <button onClick={() => setShowToast(false)} className="text-emerald-200 hover:text-white p-1 cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -713,10 +756,10 @@ export function FeedbackEmailModal({
                   </div>
                   
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    {/* 불합격한 경우: '재응시하기' 버튼만 생성 (https://test38-virid.vercel.app/) */}
+                    {/* 불합격한 경우: '재응시하기' 버튼만 생성 (https://test14-wyc8.vercel.app/) */}
                     {!candidate.isPassed && (
                       <a
-                        href="https://test38-virid.vercel.app/"
+                        href="https://test14-wyc8.vercel.app/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-rose-500/30"
@@ -727,10 +770,10 @@ export function FeedbackEmailModal({
                       </a>
                     )}
 
-                    {/* 합격한 경우: '다른 모듈 신청하기' 버튼만 생성 (https://test14-wyc8.vercel.app/) */}
+                    {/* 합격한 경우: '다른 모듈 신청하기' 버튼만 생성 (https://test34-tcuc.vercel.app/) */}
                     {candidate.isPassed && (
                       <a
-                        href="https://test14-wyc8.vercel.app/"
+                        href="https://test34-tcuc.vercel.app/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-indigo-500/30"
@@ -804,7 +847,12 @@ export function FeedbackEmailModal({
             <button
               onClick={handleSendEmail}
               disabled={isSending}
-              className={`px-5 py-2 text-white text-xs font-black rounded-xl shadow-lg cursor-pointer flex items-center gap-2 transition-all ${
+              title={
+                candidate.isPassed
+                  ? '발송 후 합격자 페이지(https://test34-tcuc.vercel.app/)로 연결됩니다'
+                  : '발송 후 불합격자 페이지(https://test14-wyc8.vercel.app/)로 연결됩니다'
+              }
+              className={`px-5 py-2 text-white text-xs font-black rounded-xl shadow-lg cursor-pointer flex items-center gap-1.5 transition-all ${
                 isSent
                   ? 'bg-emerald-600 hover:bg-emerald-500'
                   : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border border-emerald-400/30'
@@ -813,17 +861,19 @@ export function FeedbackEmailModal({
               {isSending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>발송 중...</span>
+                  <span>발송 및 연결 중...</span>
                 </>
               ) : isSent ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-emerald-200" />
-                  <span>재발송하기</span>
+                  <span>재발송 및 연결</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-emerald-200" />
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4 text-emerald-200" />
                   <span>발송하기</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-emerald-200" />
                 </>
               )}
             </button>
