@@ -1,4 +1,3 @@
-import React from 'react';
 import { X } from 'lucide-react';
 
 export function FeedbackEmailModal({ isOpen, onClose, candidate }: any) {
