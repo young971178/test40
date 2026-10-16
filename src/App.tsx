@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Award,
   CheckCircle2,
@@ -11,7 +11,6 @@ import {
   Printer,
   Edit3,
   X,
-  UserCheck,
   Target,
   Cpu,
   Sparkles,
